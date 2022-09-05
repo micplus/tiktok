@@ -3,9 +3,9 @@ package request
 import "mime/multipart"
 
 type PublishAction struct {
-	Title  string
-	UserID int64
-	Data   *multipart.FileHeader
+	Title   string
+	LoginID int64
+	Data    *multipart.FileHeader
 }
 
 type PublishList struct {

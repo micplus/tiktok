@@ -75,7 +75,7 @@ func Action(args *in.PublishAction) (*out.PublishAction, error) {
 	}
 
 	video := &model.Video{
-		UserID:   args.UserID,
+		UserID:   args.LoginID,
 		Title:    args.Title,
 		PlayURL:  videoPath,
 		CoverURL: coverPath,

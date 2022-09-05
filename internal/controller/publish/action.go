@@ -19,17 +19,17 @@ func Action(c *gin.Context) {
 	}
 
 	// 中间件从token取id
-	idany, ok := c.Get("login_id")
+	loginIDAny, ok := c.Get("login_id")
 	if !ok {
 		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
-	id := idany.(int64)
+	loginID := loginIDAny.(int64)
 
 	args := &request.PublishAction{
-		Title:  title,
-		UserID: id,
-		Data:   data,
+		Title:   title,
+		LoginID: loginID,
+		Data:    data,
 	}
 
 	reply, err := publish.Action(args)
