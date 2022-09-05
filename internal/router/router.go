@@ -2,6 +2,7 @@ package router
 
 import (
 	"tiktok/config"
+	"tiktok/internal/controller/favorite"
 	"tiktok/internal/controller/feed"
 	"tiktok/internal/controller/publish"
 	"tiktok/internal/controller/user"
@@ -24,6 +25,8 @@ func Init() *gin.Engine {
 	g.GET("/user", mw.Auth(), user.User)
 	g.POST("/publish/action", mw.Auth(), publish.Action)
 	g.GET("/publish/list", mw.Auth(), publish.List)
+
+	g.POST("/favorite/action", mw.Auth(), favorite.Action)
 
 	return r
 }

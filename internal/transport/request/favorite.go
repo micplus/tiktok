@@ -5,3 +5,8 @@ type FavoriteAction struct {
 	VideoID int64
 	Type    int64
 }
+
+type FavoriteList struct {
+	LoginID int64
+	UserID  int64
+}
