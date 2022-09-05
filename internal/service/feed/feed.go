@@ -10,7 +10,6 @@ import (
 )
 
 func Feed(args *in.Feed) (*out.Feed, error) {
-	// token := args.Token
 	now := time.Now().UnixMilli()
 	if args.LatestTime != 0 {
 		now = args.LatestTime

@@ -17,12 +17,16 @@ func Feed(c *gin.Context) {
 			now = lt
 		}
 	}
-	token := c.Query("token")
+
+	loginID := int64(0)
+	if loginIDAny, ok := c.Get("login_id"); ok {
+		loginID = loginIDAny.(int64)
+	}
 
 	// 包装请求
 	args := &request.Feed{
 		LatestTime: now,
-		Token:      token,
+		LoginID:    loginID,
 	}
 
 	// 调用服务

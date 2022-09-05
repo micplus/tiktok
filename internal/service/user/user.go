@@ -9,7 +9,7 @@ import (
 
 func User(args *in.User) (*out.User, error) {
 	// 鉴权由中间件代行
-	user, err := mapper.UserByID(args.ID)
+	user, err := mapper.UserByID(args.UserID)
 	if err != nil {
 		return nil, err
 	}

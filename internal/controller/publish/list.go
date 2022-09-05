@@ -1,17 +1,37 @@
 package publish
 
 import (
-	"tiktok/internal/model"
+	"net/http"
+	"strconv"
+	"tiktok/internal/service/publish"
+	"tiktok/internal/transport/request"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ListResponse struct {
-	StatusCode int32         `json:"status_code"`          // 状态码，0-成功，其他值-失败
-	StatusMsg  *string       `json:"status_msg,omitempty"` // 返回状态描述
-	VideoList  []model.Video `json:"video_list,omitempty"` // 用户发布的视频列表
-}
-
 func List(c *gin.Context) {
+	// 中间件从token取id到key "login_id"
+	loginIDAny, ok := c.Get("login_id")
+	if !ok {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+	loginID := loginIDAny.(int64)
+	userID, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
 
+	args := &request.PublishList{
+		LoginID: loginID,
+		UserID:  userID,
+	}
+
+	reply, err := publish.List(args)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	c.JSON(http.StatusOK, reply)
 }

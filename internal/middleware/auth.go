@@ -52,6 +52,9 @@ func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Query("token")
 		if token == "" {
+			token = c.PostForm("token")
+		}
+		if token == "" {
 			c.JSON(http.StatusOK, response.Common{
 				StatusCode: int32(status.NoLogin),
 				StatusMsg:  status.NoLogin.Message(),
@@ -77,7 +80,7 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 		// 请求中的token有效，使用token携带的用户id
-		c.Set("user_id", claims.UserID)
+		c.Set("login_id", claims.UserID)
 		c.Next()
 	}
 }

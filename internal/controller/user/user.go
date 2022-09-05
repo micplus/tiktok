@@ -10,15 +10,22 @@ import (
 )
 
 func User(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	loginIDAny, ok := c.Get("login_id")
+	if !ok {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+	loginID := loginIDAny.(int64)
+
+	userID, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, nil)
+		return
 	}
-	token := c.Query("token")
 
 	args := &request.User{
-		ID:    id,
-		Token: token,
+		LoginID: loginID,
+		UserID:  userID,
 	}
 
 	reply, err := user.User(args)

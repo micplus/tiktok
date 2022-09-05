@@ -1,8 +1,8 @@
 package request
 
 type User struct {
-	ID    int64
-	Token string
+	LoginID int64
+	UserID  int64
 }
 
 type Register struct {

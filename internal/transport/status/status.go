@@ -11,6 +11,8 @@ const (
 	UsernameExists
 	UsernamePasswordNotMatch
 	UserNotExists
+	VideoNotSupported
+	Retry
 )
 
 func (c Code) Message() string {
@@ -31,6 +33,10 @@ func (c Code) Message() string {
 		return "用户名或密码错误"
 	case UserNotExists:
 		return "用户不存在"
+	case VideoNotSupported:
+		return "不支持的视频格式"
+	case Retry:
+		return "请重试"
 	default:
 		return "Unknown error"
 	}
