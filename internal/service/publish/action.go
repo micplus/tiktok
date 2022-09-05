@@ -81,7 +81,7 @@ func Action(args *in.PublishAction) (*out.PublishAction, error) {
 		CoverURL: coverPath,
 	}
 
-	if err := mapper.CreateVideo(video); err != nil {
+	if err := mapper.CreateVideoWithUserID(video, args.LoginID); err != nil {
 		log.Println("service.publish.Action: ", err)
 		return nil, err
 	}
