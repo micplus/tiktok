@@ -11,7 +11,7 @@ const (
 
 func VideosByTime(now int64) ([]*model.Video, error) {
 	var videos []*model.Video
-	err := db.Model(&model.Video{}).
+	err := db.Joins("User").
 		Where("created_at<?", now).
 		Order("created_at DESC").
 		Limit(limit).
@@ -25,7 +25,7 @@ func VideosByTime(now int64) ([]*model.Video, error) {
 
 func VideosByUserID(userID int64) ([]*model.Video, error) {
 	var videos []*model.Video
-	err := db.Where("user_id=?", userID).
+	err := db.Joins("User", db.Where(&model.User{ID: userID})).
 		Order("created_at DESC").
 		Limit(limit).
 		Find(&videos).Error
@@ -36,6 +36,7 @@ func VideosByUserID(userID int64) ([]*model.Video, error) {
 	return videos, nil
 }
 
-func CreateVideo(video *model.Video) error {
-	return db.Create(video).Error
+func CreateVideoWithUserID(video *model.Video, userID int64) error {
+	user := &model.User{ID: userID}
+	return db.Model(user).Association("Published").Append(video)
 }
