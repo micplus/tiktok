@@ -1,7 +1,6 @@
 package feed
 
 import (
-	"log"
 	"tiktok/internal/mapper"
 	in "tiktok/internal/transport/request"
 	out "tiktok/internal/transport/response"
@@ -15,11 +14,13 @@ func Feed(args *in.Feed) (*out.Feed, error) {
 		now = args.LatestTime
 	}
 
-	videos, err := mapper.VideosByTime(now)
-	if err != nil {
-		log.Println("service.feed.feed: ", err)
-		return nil, err
-	}
+	videos, err := mapper.VideosByTimeUserID(now, args.LoginID)
+
+	// videos, err := mapper.VideosByTime(now)
+	// if err != nil {
+	// 	log.Println("service.feed.feed: ", err)
+	// 	return nil, err
+	// }
 
 	if len(videos) == 0 {
 		return &out.Feed{

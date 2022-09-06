@@ -9,6 +9,23 @@ const (
 	limit = 30
 )
 
+func VideosByTimeUserID(now, userID int64) ([]*model.Video, error) {
+	var videos []*model.Video
+
+	db.Raw(`
+	SELECT * FROM videos WHERE videos.user_id=1 
+	LEFT JOIN user_videos ON user_videos.user_id=videos.user_id
+	`, userID)
+
+
+`
+	WITH result_videos AS (
+		SELECT * FROM videos WHERE user_id=?
+	)
+	
+`, userID
+}
+
 func VideosByTime(now int64) ([]*model.Video, error) {
 	var videos []*model.Video
 	err := db.Joins("User").
@@ -18,6 +35,18 @@ func VideosByTime(now int64) ([]*model.Video, error) {
 		Find(&videos).Error
 	if err != nil {
 		log.Println("mapper.VideosByTime: ", err)
+		return nil, err
+	}
+	return videos, nil
+}
+
+func VideosByIDs(ids []int64) ([]*model.Video, error) {
+	var videos []*model.Video
+	err := db.Order("created_at DESC").
+		Limit(limit).
+		Find(&videos, ids).Error
+	if err != nil {
+		log.Println("mapper.VideosByIDs: ", err)
 		return nil, err
 	}
 	return videos, nil
