@@ -10,8 +10,8 @@ func User(args *Request) (*Response, error) {
 	logError(err)
 	if user == nil {
 		return &Response{
-			StatusCode: int32(statusNotExists),
-			StatusMsg:  statusNotExists.msg(),
+			StatusCode: int32(StatusNotExists),
+			StatusMsg:  StatusNotExists.msg(),
 		}, nil
 	}
 
@@ -34,8 +34,8 @@ func User(args *Request) (*Response, error) {
 	}
 
 	reply := &Response{
-		StatusCode: int32(statusOK),
-		StatusMsg:  statusOK.msg(),
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
 		User:       user,
 	}
 	return reply, nil
@@ -59,17 +59,17 @@ func logError(err error) {
 }
 
 const (
-	statusOK status = iota
-	statusNotExists
+	StatusOK status = iota
+	StatusNotExists
 )
 
 type status int32
 
 func (s status) msg() string {
 	switch s {
-	case statusOK:
+	case StatusOK:
 		return "OK"
-	case statusNotExists:
+	case StatusNotExists:
 		return "要找的用户不存在"
 	default:
 		return "未知错误"

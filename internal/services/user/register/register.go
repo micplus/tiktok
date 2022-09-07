@@ -8,17 +8,15 @@ import (
 	"time"
 )
 
-const (
-	maxLength = 32
-)
+const maxLength = 32 // same as login
 
 func Register(args *Request) (*Response, error) {
 	username, password := args.Username, args.Password
 	// 参数校验
 	if len(username) > maxLength || len(password) > maxLength {
 		return &Response{
-			StatusCode: int32(statusTooLong),
-			StatusMsg:  statusTooLong.msg(),
+			StatusCode: int32(StatusTooLong),
+			StatusMsg:  StatusTooLong.msg(),
 		}, nil
 	}
 	// 检查重名
@@ -29,8 +27,8 @@ func Register(args *Request) (*Response, error) {
 	}
 	if cnt > 0 {
 		return &Response{
-			StatusCode: int32(statusUsernameExists),
-			StatusMsg:  statusUsernameExists.msg(),
+			StatusCode: int32(StatusUsernameExists),
+			StatusMsg:  StatusUsernameExists.msg(),
 		}, nil
 	}
 	// 含盐加密
@@ -71,8 +69,8 @@ func Register(args *Request) (*Response, error) {
 
 	// 返回结果
 	reply := &Response{
-		StatusCode: int32(statusOK),
-		StatusMsg:  statusOK.msg(),
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
 		UserID:     id,
 		Token:      token,
 	}
@@ -94,18 +92,18 @@ type Response struct {
 type status int32
 
 const (
-	statusOK status = iota
-	statusTooLong
-	statusUsernameExists
+	StatusOK status = iota
+	StatusTooLong
+	StatusUsernameExists
 )
 
 func (s status) msg() string {
 	switch s {
-	case statusOK:
+	case StatusOK:
 		return "OK"
-	case statusTooLong:
+	case StatusTooLong:
 		return "用户名、密码不能超过32个字符"
-	case statusUsernameExists:
+	case StatusUsernameExists:
 		return "用户名已存在"
 	default:
 		return "未知错误"

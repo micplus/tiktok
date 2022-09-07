@@ -16,26 +16,16 @@ func countUsername(username string) (int64, error) {
 	return count, nil
 }
 
-// 并返回创建的ID
 func createUser(user *model.User) (int64, error) {
-	var id int64
-	tx, err := db.Beginx()
-	if err != nil {
-		return id, err
-	}
 	stmt := `INSERT INTO users(
 		name, created_at, modified_at
 	) VALUES (?, ?, ?);`
-	if _, err = tx.Exec(stmt, user.Name, user.CreatedAt, user.ModifiedAt); err != nil {
-		return id, err
+	res, err := db.Exec(stmt, user.Name, user.CreatedAt, user.ModifiedAt)
+	if err != nil {
+		return 0, err
 	}
-	if err = tx.Select(&id, `SELECT LAST_INSERT_ID();`); err != nil {
-		return id, err
-	}
-	if err = tx.Commit(); err != nil {
-		return id, err
-	}
-	return id, nil
+
+	return res.LastInsertId()
 }
 
 func createUserLogin(ul *model.UserLogin) error {

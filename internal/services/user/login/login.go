@@ -12,8 +12,8 @@ func Login(args *Request) (*Response, error) {
 	// 参数校验
 	if len(username) > maxLength || len(password) > maxLength {
 		return &Response{
-			StatusCode: int32(statusTooLong),
-			StatusMsg:  statusTooLong.msg(),
+			StatusCode: int32(StatusTooLong),
+			StatusMsg:  StatusTooLong.msg(),
 		}, nil
 	}
 
@@ -25,8 +25,8 @@ func Login(args *Request) (*Response, error) {
 	}
 	if user == nil {
 		return &Response{
-			StatusCode: int32(statusNotMatch),
-			StatusMsg:  statusNotMatch.msg(),
+			StatusCode: int32(StatusNotMatch),
+			StatusMsg:  StatusNotMatch.msg(),
 		}, nil
 	}
 
@@ -35,8 +35,8 @@ func Login(args *Request) (*Response, error) {
 	// 校验密码
 	if encrypted != user.Password {
 		return &Response{
-			StatusCode: int32(statusNotMatch),
-			StatusMsg:  statusNotMatch.msg(),
+			StatusCode: int32(StatusNotMatch),
+			StatusMsg:  StatusNotMatch.msg(),
 		}, nil
 	}
 	// 签发token
@@ -46,8 +46,8 @@ func Login(args *Request) (*Response, error) {
 	}
 
 	reply := &Response{
-		StatusCode: int32(statusOK),
-		StatusMsg:  statusOK.msg(),
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
 		UserID:     user.UserID,
 		Token:      token,
 	}
@@ -70,18 +70,18 @@ type Response struct {
 type status int32
 
 const (
-	statusOK status = iota
-	statusTooLong
-	statusNotMatch
+	StatusOK status = iota
+	StatusTooLong
+	StatusNotMatch
 )
 
 func (s status) msg() string {
 	switch s {
-	case statusOK:
+	case StatusOK:
 		return "OK"
-	case statusTooLong:
+	case StatusTooLong:
 		return "用户名、密码不能超过32个字符"
-	case statusNotMatch:
+	case StatusNotMatch:
 		return "用户名或密码错误"
 	default:
 		return "未知错误"

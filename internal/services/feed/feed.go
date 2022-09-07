@@ -99,13 +99,13 @@ type Response struct {
 	VideoList  []model.Video `json:"video_list,omitempty"` // 视频列表
 }
 
-type Status int32
+type status int32
 
 const (
-	StatusOK Status = iota
+	StatusOK status = iota
 )
 
-func (s Status) msg() string {
+func (s status) msg() string {
 	switch s {
 	case StatusOK:
 		return "OK"
