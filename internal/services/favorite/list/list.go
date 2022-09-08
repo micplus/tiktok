@@ -14,6 +14,7 @@ func List(args *Request) *Response {
 	// 查目标用户点赞列表
 	ids, err := favoriteIDsByUserID(args.UserID)
 	if err != nil {
+		log.Println("favorite.action.List: ", err)
 		reply.StatusCode = int32(StatusListFailed)
 		reply.StatusMsg = StatusListFailed.msg()
 		return reply
@@ -24,9 +25,22 @@ func List(args *Request) *Response {
 	}
 	videos, err := videosByIDs(ids)
 	if err != nil {
+		log.Println("favorite.action.List: ", err)
 		reply.StatusCode = int32(StatusListFailed)
 		reply.StatusMsg = StatusListFailed.msg()
 		return reply
+	}
+
+	// 查视频点赞数
+	favoriteCount, err := favoriteCountsByVideoIDs(ids)
+	if err != nil {
+		log.Println("favorite.action.List: ", err)
+	}
+	if err == nil {
+		// 更新videos中的点赞数信息
+		for i := range videos {
+			videos[i].FavoriteCount = favoriteCount[videos[i].ID]
+		}
 	}
 
 	// 查自己点赞列表，更新红心

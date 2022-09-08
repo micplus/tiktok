@@ -52,7 +52,7 @@ func Login(args *Request) *Response {
 		return reply
 	}
 
-	reply.UserID = user.ID
+	reply.UserID = user.UserID
 	reply.Token = token
 
 	return reply

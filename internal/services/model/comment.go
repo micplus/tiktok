@@ -7,7 +7,7 @@ type Comment struct {
 	CreateDate string `json:"create_date" db:"create_date"` // 评论发布日期，格式 mm-dd
 	UserID     int64  `json:"-" db:"user_id"`
 	VideoID    int64  `json:"-" db:"video_id"`
-	CreatedAt  int64  `json:"-" db:"create_at"`
+	CreatedAt  int64  `json:"-" db:"created_at"`
 	ModifiedAt int64  `json:"-" db:"modified_at"`
 	User       User   `json:"user" db:"user"` // 评论用户信息
 }

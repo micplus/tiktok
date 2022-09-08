@@ -66,6 +66,7 @@ func Register(args *Request) *Response {
 	}
 	err = createUserLogin(login)
 	if err != nil {
+		log.Println("user.register.Register: ", err)
 		reply.StatusCode = int32(StatusFailed)
 		reply.StatusMsg = StatusFailed.msg()
 		return reply
@@ -74,6 +75,7 @@ func Register(args *Request) *Response {
 	// 生成token
 	token, err := auth.ReleaseToken(user.ID)
 	if err != nil {
+		log.Println("user.register.Register: ", err)
 		reply.StatusCode = int32(StatusFailed)
 		reply.StatusMsg = StatusFailed.msg()
 		return reply

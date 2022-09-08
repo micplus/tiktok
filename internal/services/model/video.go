@@ -10,7 +10,7 @@ type Video struct {
 	CommentCount  int64  `json:"comment_count" db:"-"`  // 视频的评论总数
 	FavoriteCount int64  `json:"favorite_count" db:"-"` // 视频的点赞总数
 	IsFavorite    bool   `json:"is_favorite" db:"-"`    // true-已点赞，false-未点赞
-	CreatedAt     int64  `json:"-" db:"create_at"`      // 视频创建时间
+	CreatedAt     int64  `json:"-" db:"created_at"`     // 视频创建时间
 	ModifiedAt    int64  `json:"-" db:"modified_at"`
 	User          User   `json:"author" db:"user"` // 视频作者信息
 }

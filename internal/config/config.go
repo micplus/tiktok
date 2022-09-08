@@ -44,7 +44,7 @@ func init() {
 		log.Panic(err)
 	}
 	detail := new(config)
-	if _, err := toml.DecodeFile(string(base)+"/home/abc/workspace/tiktok/internal/config/config.toml", detail); err != nil {
+	if _, err := toml.DecodeFile("/home/abc/workspace/tiktok/internal/config/config.toml", detail); err != nil {
 		log.Panic(err)
 	}
 	DSN = detail.Mysql.dsn()

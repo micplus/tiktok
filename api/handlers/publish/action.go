@@ -18,6 +18,7 @@ func Action(c *gin.Context) {
 		return
 	}
 	// 读出数据
+	filename := data.Filename
 	file, err := data.Open()
 	if err != nil {
 		log.Println("publish.Action: ", err)
@@ -44,9 +45,10 @@ func Action(c *gin.Context) {
 	loginID := loginIDAny.(int64)
 
 	args := &action.Request{
-		Title:   title,
-		LoginID: loginID,
-		Data:    bytes,
+		Title:    title,
+		LoginID:  loginID,
+		Filename: filename,
+		Data:     bytes,
 	}
 
 	reply := action.Action(args)

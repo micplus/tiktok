@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"tiktok/internal/config"
 	"tiktok/internal/services/model"
 	"time"
 
@@ -23,8 +22,8 @@ var supportedExts = map[string]struct{}{
 }
 
 var (
-	videoDir = config.PublicPath + "videos/"
-	coverDir = config.PublicPath + "images/"
+	videoDir = "/home/abc/workspace/tiktok/public/videos/"
+	coverDir = "/home/abc/workspace/tiktok/public/images/"
 )
 
 const coverExt = ".jpeg"
@@ -54,14 +53,15 @@ func Action(args *Request) *Response {
 		reply.StatusMsg = StatusUploadFailed.msg()
 		return reply
 	}
-	defer f.Close()
 
 	if _, err = f.Write(args.Data); err != nil {
 		log.Println("publish.action.Action: ", err)
 		reply.StatusCode = int32(StatusUploadFailed)
 		reply.StatusMsg = StatusUploadFailed.msg()
+		f.Close()
 		return reply
 	}
+	f.Close()
 
 	coverURL := coverDir + name + coverExt
 	// 取1帧作封面，保存

@@ -23,7 +23,7 @@ func Action(args *Request) *Response {
 	case OpComment:
 		now := time.Now()
 		month, day := now.Month(), now.Day()
-		date := fmt.Sprintf("%d-%d", month, day)
+		date := fmt.Sprintf("%02d-%02d", month, day)
 
 		c := model.Comment{
 			Content:    args.CommentText,

@@ -8,12 +8,15 @@ import (
 var db = database.DB
 
 func userByID(id int64) (*model.User, error) {
-	user := new(model.User)
+	user := []model.User{}
 	stmt := `SELECT * FROM users WHERE id=?;`
-	if err := db.Select(user, stmt, id); err != nil {
+	if err := db.Select(&user, stmt, id); err != nil {
 		return nil, err
 	}
-	return user, nil
+	if len(user) == 0 {
+		return nil, nil
+	}
+	return &user[0], nil
 }
 
 func countFollowsByID(id int64) (int64, error) {

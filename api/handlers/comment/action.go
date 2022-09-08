@@ -33,9 +33,7 @@ func Action(c *gin.Context) {
 
 	commentID, err := strconv.ParseInt(c.Query("comment_id"), 10, 64)
 	if err != nil {
-		log.Println("comment.Action: ", err)
-		c.JSON(http.StatusBadRequest, nil)
-		return
+		commentID = 0
 	}
 
 	commentText := c.Query("comment_text")

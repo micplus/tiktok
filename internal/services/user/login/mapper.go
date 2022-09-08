@@ -8,10 +8,13 @@ import (
 var db = database.DB
 
 func loginByUsername(username string) (*model.UserLogin, error) {
-	user := new(model.UserLogin)
+	users := []model.UserLogin{}
 	stmt := `SELECT * FROM user_logins WHERE username=?;`
-	if err := db.QueryRowx(stmt, username).Scan(&user); err != nil {
+	if err := db.Select(&users, stmt, username); err != nil {
 		return nil, err
 	}
-	return user, nil
+	if len(users) == 0 {
+		return nil, nil
+	}
+	return &users[0], nil
 }

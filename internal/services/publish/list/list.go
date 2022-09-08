@@ -36,7 +36,7 @@ func List(args *Request) *Response {
 	// 设置点赞数
 	favoriteCount, err := favoriteCountsByVideoIDs(ids)
 	if err != nil {
-		log.Println(err)
+		log.Println("publish.list.List: ", err)
 	}
 	if err == nil {
 		for i := range videos {

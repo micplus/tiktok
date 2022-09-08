@@ -26,6 +26,8 @@ CREATE TABLE user_logins (
     username varchar(32) NOT NULL,
     password varchar(32) NOT NULL,
     salt varchar(8) NOT NULL,
+    created_at bigint NOT NULL,
+    modified_at bigint NOT NULL,
     user_id bigint NOT NULL,
     PRIMARY KEY(`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

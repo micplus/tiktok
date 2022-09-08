@@ -17,10 +17,16 @@ func createComment(c *model.Comment) error {
 }
 
 func userByID(id int64) (*model.User, error) {
-	user := new(model.User)
+	users := []model.User{}
 	stmt := `SELECT * FROM users WHERE id=?;`
-	err := db.Select(user, stmt, id)
-	return user, err
+	err := db.Select(&users, stmt, id)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, nil
+	}
+	return &users[0], err
 }
 
 func deleteCommentByID(id int64) error {

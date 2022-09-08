@@ -11,7 +11,7 @@ func commentsByVideoID(id int64) ([]model.Comment, error) {
 	comments := []model.Comment{}
 	stmt := `SELECT
 		comments.*,
-		users.id 'user.id'
+		users.id 'user.id',
 		users.name 'user.name'
 	FROM comments
 	JOIN users ON comments.user_id=users.id
