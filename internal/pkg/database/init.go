@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"tiktok/internal/config"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -10,9 +11,8 @@ import (
 var DB *sqlx.DB
 
 func init() {
-	dsn := ""
 	var err error
-	DB, err = sqlx.Connect("mysql", dsn)
+	DB, err = sqlx.Connect("mysql", config.DSN)
 	if err != nil {
 		log.Fatalln("database.init: ", err)
 	}

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"os/exec"
 
 	"github.com/BurntSushi/toml"
 )
@@ -38,10 +39,14 @@ type config struct {
 }
 
 func init() {
+	base, err := exec.Command("bash", "-c", "echo $TIKTOK_DIR").Output()
+	if err != nil {
+		log.Panic(err)
+	}
 	detail := new(config)
-	if _, err := toml.DecodeFile("/home/abc/workspace/tiktok/config/config.toml", detail); err != nil {
+	if _, err := toml.DecodeFile(string(base)+"/home/abc/workspace/tiktok/internal/config/config.toml", detail); err != nil {
 		log.Panic(err)
 	}
 	DSN = detail.Mysql.dsn()
-	PublicPath = detail.Public.Path
+	PublicPath = string(base) + detail.Public.Path
 }

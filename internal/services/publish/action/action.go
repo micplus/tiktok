@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"tiktok/internal/config"
 	"tiktok/internal/services/model"
 	"time"
 
@@ -22,8 +23,8 @@ var supportedExts = map[string]struct{}{
 }
 
 var (
-	videoDir = "/videos/"
-	coverDir = "/images/"
+	videoDir = config.PublicPath + "videos/"
+	coverDir = config.PublicPath + "images/"
 )
 
 const coverExt = ".jpeg"
