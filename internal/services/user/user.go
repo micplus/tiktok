@@ -5,14 +5,18 @@ import (
 	"tiktok/internal/services/model"
 )
 
-func User(args *Request) (*Response, error) {
+func User(args *Request) *Response {
+	reply := &Response{
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
+	}
+
 	user, err := userByID(args.UserID)
 	logError(err)
 	if user == nil {
-		return &Response{
-			StatusCode: int32(StatusNotExists),
-			StatusMsg:  StatusNotExists.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusNotExists)
+		reply.StatusMsg = StatusNotExists.msg()
+		return reply
 	}
 
 	fwc, err := countFollowsByID(args.UserID)
@@ -33,12 +37,9 @@ func User(args *Request) (*Response, error) {
 		user.IsFollow = followed
 	}
 
-	reply := &Response{
-		StatusCode: int32(StatusOK),
-		StatusMsg:  StatusOK.msg(),
-		User:       user,
-	}
-	return reply, nil
+	reply.User = user
+
+	return reply
 }
 
 type Request struct {

@@ -30,10 +30,10 @@ func Feed(c *gin.Context) {
 	}
 
 	// 调用服务
-	reply, err := feed.Feed(args)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, nil)
-		return
-	}
+	reply := feed.Feed(args)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, nil)
+	//	return
+	//}
 	c.JSON(http.StatusOK, reply)
 }

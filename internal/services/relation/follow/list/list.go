@@ -11,40 +11,40 @@ func List(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	user, err := userByID(args.UserID)
+	ids, err := followIDsByUserID(args.UserID)
 	if err != nil {
-		log.Println("publish.list.List: ", err)
+		log.Println("relation.follow.list.List: ", err)
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
+	}
+	if len(ids) == 0 {
+		reply.UserList = []model.User{}
+		return reply
+	}
+
+	users, err := usersByIDs(ids)
+	if err != nil {
+		log.Println("relation.follow.list.List: ", err)
 		reply.StatusCode = int32(StatusFailed)
 		reply.StatusMsg = StatusFailed.msg()
 		return reply
 	}
 
-	videos, err := videosByUserID(args.UserID)
+	// 查自己关注列表，更新红心
+	f, err := isFollowsOfUserID(ids, args.LoginID)
 	if err != nil {
-		log.Println("publish.list.List: ", err)
-		reply.StatusCode = int32(StatusFailed)
-		reply.StatusMsg = StatusFailed.msg()
-		return reply
-	}
-	// 设置User，并取出所有ID
-	ids := make([]int64, len(videos))
-	for i := range videos {
-		videos[i].User = *user
-		ids[i] = videos[i].ID
-	}
-
-	// 设置点赞数
-	favoriteCount, err := favoriteCountsByVideoIDs(ids)
-	if err != nil {
-		log.Println(err)
+		log.Println("relation.follow.list.List: ", err)
 	}
 	if err == nil {
-		for i := range videos {
-			videos[i].FavoriteCount = favoriteCount[videos[i].ID]
+		for i := range users {
+			if _, ok := f[users[i].ID]; ok {
+				users[i].IsFollow = true
+			}
 		}
 	}
 
-	reply.VideoList = videos
+	reply.UserList = users
 
 	return reply
 }
@@ -55,9 +55,9 @@ type Request struct {
 }
 
 type Response struct {
-	StatusCode int32         `json:"status_code"`          // 状态码，0-成功，其他值-失败
-	StatusMsg  string        `json:"status_msg,omitempty"` // 返回状态描述
-	VideoList  []model.Video `json:"video_list,omitempty"` // 用户发布的视频列表
+	StatusCode int32        `json:"status_code"`          // 状态码，0-成功，其他值-失败
+	StatusMsg  string       `json:"status_msg,omitempty"` // 返回状态描述
+	UserList   []model.User `json:"user_list,omitempty"`
 }
 
 type status int32

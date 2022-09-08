@@ -7,7 +7,12 @@ import (
 	"time"
 )
 
-func Feed(args *Request) (*Response, error) {
+func Feed(args *Request) *Response {
+	reply := &Response{
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
+	}
+
 	now := time.Now().UnixMilli()
 	if args.LatestTime != 0 {
 		now = args.LatestTime
@@ -17,10 +22,7 @@ func Feed(args *Request) (*Response, error) {
 	videos, err := videosBeforeTime(now)
 	printError(err)
 	if len(videos) == 0 {
-		return &Response{
-			StatusCode: int32(StatusOK),
-			StatusMsg:  StatusOK.msg(),
-		}, nil
+		return reply
 	}
 
 	// 记录选出的ID（30条）
@@ -63,13 +65,10 @@ func Feed(args *Request) (*Response, error) {
 		}
 	}
 
-	reply := &Response{
-		StatusCode: int32(StatusOK),
-		StatusMsg:  StatusOK.msg(),
-		NextTime:   videos[len(videos)-1].CreatedAt, // 倒序，最后一个之前即下次
-		VideoList:  videos,
-	}
-	return reply, nil
+	reply.NextTime = videos[len(videos)-1].CreatedAt // 倒序，最后一个之前即下次
+	reply.VideoList = videos
+
+	return reply
 }
 
 func printError(err error) {

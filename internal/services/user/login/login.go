@@ -7,52 +7,55 @@ import (
 
 const maxLength = 32 // same as register
 
-func Login(args *Request) (*Response, error) {
+func Login(args *Request) *Response {
+	reply := &Response{
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
+	}
+
 	username, password := args.Username, args.Password
 	// 参数校验
 	if len(username) > maxLength || len(password) > maxLength {
-		return &Response{
-			StatusCode: int32(StatusTooLong),
-			StatusMsg:  StatusTooLong.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusTooLong)
+		reply.StatusMsg = StatusTooLong.msg()
+		return reply
 	}
 
 	// 按名取值
 	user, err := loginByUsername(username)
 	if err != nil {
 		log.Println("user.login.Login: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 	if user == nil {
-		return &Response{
-			StatusCode: int32(StatusNotMatch),
-			StatusMsg:  StatusNotMatch.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusNotMatch)
+		reply.StatusMsg = StatusNotMatch.msg()
+		return reply
 	}
 
 	// 含盐加密
 	encrypted := auth.Encrypt(password, user.Salt)
 	// 校验密码
 	if encrypted != user.Password {
-		return &Response{
-			StatusCode: int32(StatusNotMatch),
-			StatusMsg:  StatusNotMatch.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusNotMatch)
+		reply.StatusMsg = StatusNotMatch.msg()
+		return reply
 	}
 	// 签发token
 	token, err := auth.ReleaseToken(user.UserID)
 	if err != nil {
-		return nil, err
+		log.Println("user.login.Login: ", err)
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 
-	reply := &Response{
-		StatusCode: int32(StatusOK),
-		StatusMsg:  StatusOK.msg(),
-		UserID:     user.UserID,
-		Token:      token,
-	}
+	reply.UserID = user.ID
+	reply.Token = token
 
-	return reply, nil
+	return reply
 }
 
 type Request struct {
@@ -73,6 +76,7 @@ const (
 	StatusOK status = iota
 	StatusTooLong
 	StatusNotMatch
+	StatusFailed
 )
 
 func (s status) msg() string {

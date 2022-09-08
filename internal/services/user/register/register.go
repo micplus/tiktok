@@ -10,26 +10,31 @@ import (
 
 const maxLength = 32 // same as login
 
-func Register(args *Request) (*Response, error) {
+func Register(args *Request) *Response {
+	reply := &Response{
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
+	}
+
 	username, password := args.Username, args.Password
 	// 参数校验
 	if len(username) > maxLength || len(password) > maxLength {
-		return &Response{
-			StatusCode: int32(StatusTooLong),
-			StatusMsg:  StatusTooLong.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusTooLong)
+		reply.StatusMsg = StatusTooLong.msg()
+		return reply
 	}
 	// 检查重名
 	cnt, err := countUsername(username)
 	if err != nil {
 		log.Println("user.register.Register: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 	if cnt > 0 {
-		return &Response{
-			StatusCode: int32(StatusUsernameExists),
-			StatusMsg:  StatusUsernameExists.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusUsernameExists)
+		reply.StatusMsg = StatusUsernameExists.msg()
+		return reply
 	}
 	// 含盐加密
 	salt := auth.MakeSalt()
@@ -44,7 +49,10 @@ func Register(args *Request) (*Response, error) {
 	}
 	id, err := createUser(user)
 	if err != nil {
-		return nil, err
+		log.Println("user.register.Register: ", err)
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 
 	// 创建登录信息
@@ -58,23 +66,23 @@ func Register(args *Request) (*Response, error) {
 	}
 	err = createUserLogin(login)
 	if err != nil {
-		return nil, err
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 
 	// 生成token
 	token, err := auth.ReleaseToken(user.ID)
 	if err != nil {
-		return nil, err
+		reply.StatusCode = int32(StatusFailed)
+		reply.StatusMsg = StatusFailed.msg()
+		return reply
 	}
 
-	// 返回结果
-	reply := &Response{
-		StatusCode: int32(StatusOK),
-		StatusMsg:  StatusOK.msg(),
-		UserID:     id,
-		Token:      token,
-	}
-	return reply, nil
+	reply.UserID = id
+	reply.Token = token
+
+	return reply
 }
 
 type Request struct {
@@ -95,6 +103,7 @@ const (
 	StatusOK status = iota
 	StatusTooLong
 	StatusUsernameExists
+	StatusFailed
 )
 
 func (s status) msg() string {
@@ -105,6 +114,8 @@ func (s status) msg() string {
 		return "用户名、密码不能超过32个字符"
 	case StatusUsernameExists:
 		return "用户名已存在"
+	case StatusFailed:
+		return "注册失败"
 	default:
 		return "未知错误"
 	}

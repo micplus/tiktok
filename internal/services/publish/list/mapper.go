@@ -9,20 +9,16 @@ var db = database.DB
 
 func videosByUserID(id int64) ([]model.Video, error) {
 	videos := []model.Video{}
-	stmt := `SELECT * FROM videos WHERE user_id=?`
-	if err := db.Select(videos, stmt, id); err != nil {
-		return videos, err
-	}
-	return videos, nil
+	stmt := `SELECT * FROM videos WHERE user_id=? ORDER BY modified_at DESC;`
+	err := db.Select(videos, stmt, id)
+	return videos, err
 }
 
 func userByID(id int64) (*model.User, error) {
 	user := new(model.User)
-	stmt := `SELECT * FROM users WHERE id=?`
-	if err := db.Select(user, stmt, id); err != nil {
-		return nil, err
-	}
-	return user, nil
+	stmt := `SELECT * FROM users WHERE id=?;`
+	err := db.Select(user, stmt, id)
+	return user, err
 }
 
 // 查询给定IDs点赞数量到id: count

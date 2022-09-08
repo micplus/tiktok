@@ -11,36 +11,34 @@ func List(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	user, err := userByID(args.UserID)
+	// 查目标用户点赞列表
+	ids, err := favoriteIDsByUserID(args.UserID)
 	if err != nil {
-		log.Println("publish.list.List: ", err)
-		reply.StatusCode = int32(StatusFailed)
-		reply.StatusMsg = StatusFailed.msg()
+		reply.StatusCode = int32(StatusListFailed)
+		reply.StatusMsg = StatusListFailed.msg()
+		return reply
+	}
+	if len(ids) == 0 {
+		reply.VideoList = []model.Video{}
+		return reply
+	}
+	videos, err := videosByIDs(ids)
+	if err != nil {
+		reply.StatusCode = int32(StatusListFailed)
+		reply.StatusMsg = StatusListFailed.msg()
 		return reply
 	}
 
-	videos, err := videosByUserID(args.UserID)
+	// 查自己点赞列表，更新红心
+	f, err := isFavoritesOfUserID(ids, args.LoginID)
 	if err != nil {
-		log.Println("publish.list.List: ", err)
-		reply.StatusCode = int32(StatusFailed)
-		reply.StatusMsg = StatusFailed.msg()
-		return reply
-	}
-	// 设置User，并取出所有ID
-	ids := make([]int64, len(videos))
-	for i := range videos {
-		videos[i].User = *user
-		ids[i] = videos[i].ID
-	}
-
-	// 设置点赞数
-	favoriteCount, err := favoriteCountsByVideoIDs(ids)
-	if err != nil {
-		log.Println(err)
+		log.Println("favorite.action.List: ", err)
 	}
 	if err == nil {
 		for i := range videos {
-			videos[i].FavoriteCount = favoriteCount[videos[i].ID]
+			if _, ok := f[videos[i].ID]; ok {
+				videos[i].IsFavorite = true
+			}
 		}
 	}
 
@@ -57,22 +55,22 @@ type Request struct {
 type Response struct {
 	StatusCode int32         `json:"status_code"`          // 状态码，0-成功，其他值-失败
 	StatusMsg  string        `json:"status_msg,omitempty"` // 返回状态描述
-	VideoList  []model.Video `json:"video_list,omitempty"` // 用户发布的视频列表
+	VideoList  []model.Video `json:"video_list,omitempty"` // 用户点赞视频列表
 }
 
 type status int32
 
 const (
 	StatusOK status = iota
-	StatusFailed
+	StatusListFailed
 )
 
 func (s status) msg() string {
 	switch s {
 	case StatusOK:
 		return "OK"
-	case StatusFailed:
-		return "查询失败"
+	case StatusListFailed:
+		return "获取点赞列表失败"
 	default:
 		return "未知错误"
 	}

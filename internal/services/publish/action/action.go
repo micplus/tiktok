@@ -28,14 +28,18 @@ var (
 
 const coverExt = ".jpeg"
 
-func Action(args *Request) (*Response, error) {
+func Action(args *Request) *Response {
+	reply := &Response{
+		StatusCode: int32(StatusOK),
+		StatusMsg:  StatusOK.msg(),
+	}
+
 	// 检查扩展名
 	ext := filepath.Ext(args.Filename)
 	if _, ok := supportedExts[ext]; !ok {
-		return &Response{
-			StatusCode: int32(StatusVideoNotSupported),
-			StatusMsg:  StatusVideoNotSupported.msg(),
-		}, nil
+		reply.StatusCode = int32(StatusVideoNotSupported)
+		reply.StatusMsg = StatusVideoNotSupported.msg()
+		return reply
 	}
 	// uuid生成随机文件名，不含扩展名
 	name := uuid.NewString()
@@ -45,20 +49,26 @@ func Action(args *Request) (*Response, error) {
 	f, err := os.Create(playURL)
 	if err != nil {
 		log.Println("publish.action.Action: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusUploadFailed)
+		reply.StatusMsg = StatusUploadFailed.msg()
+		return reply
 	}
 	defer f.Close()
 
 	if _, err = f.Write(args.Data); err != nil {
 		log.Println("publish.action.Action: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusUploadFailed)
+		reply.StatusMsg = StatusUploadFailed.msg()
+		return reply
 	}
 
 	coverURL := coverDir + name + coverExt
 	// 取1帧作封面，保存
 	if err = generateCover(coverURL, playURL, 1); err != nil {
 		log.Println("publish.action.Action: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusUploadFailed)
+		reply.StatusMsg = StatusUploadFailed.msg()
+		return reply
 	}
 
 	now := time.Now().UnixMilli()
@@ -73,14 +83,12 @@ func Action(args *Request) (*Response, error) {
 
 	if err := createVideo(video); err != nil {
 		log.Println("publish.action.Action: ", err)
-		return nil, err
+		reply.StatusCode = int32(StatusUploadFailed)
+		reply.StatusMsg = StatusUploadFailed.msg()
+		return reply
 	}
 
-	reply := &Response{
-		StatusCode: int32(StatusOK),
-		StatusMsg:  StatusOK.msg(),
-	}
-	return reply, nil
+	return reply
 }
 
 func generateCover(coverName, videoName string, frameNum int) error {
@@ -121,6 +129,7 @@ type status int32
 const (
 	StatusOK status = iota
 	StatusVideoNotSupported
+	StatusUploadFailed
 )
 
 func (s status) msg() string {
@@ -129,6 +138,8 @@ func (s status) msg() string {
 		return "OK"
 	case StatusVideoNotSupported:
 		return "不支持的文件格式"
+	case StatusUploadFailed:
+		return "上传文件失败"
 	default:
 		return "未知错误"
 	}

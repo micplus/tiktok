@@ -16,17 +16,13 @@ func videosBeforeTime(now int64) ([]model.Video, error) {
 		videos.*, 
 		users.id 'user.id',
 		users.name 'user.name',
-	FROM
-		videos, users
-	WHERE 
-		videos.user_id=users.id AND
-		create_at < ?
+	FROM videos 
+	JOIN users ON videos.user_id=users.id
+	WHERE videos.create_at < ?
 	ORDER BY videos.created_at DESC
 	LIMIT ?;`
-	if err := db.Select(&videos, stmt, now, limit); err != nil {
-		return videos, err
-	}
-	return videos, nil
+	err := db.Select(&videos, stmt, now, limit)
+	return videos, err
 }
 
 // 查询给定IDs点赞数量到id: count
@@ -69,7 +65,7 @@ func commentCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
 
 func favoritesByUserID(id int64) ([]int64, error) {
 	favorites := []int64{}
-	stmt := `SELECT video_id FROM user_favorites WHERE user_id=?`
+	stmt := `SELECT DISTINCT video_id FROM user_favorites WHERE user_id=?`
 	if err := db.Select(&favorites, stmt, id); err != nil {
 		return favorites, err
 	}

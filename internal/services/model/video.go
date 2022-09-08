@@ -12,5 +12,5 @@ type Video struct {
 	IsFavorite    bool   `json:"is_favorite" db:"-"`    // true-已点赞，false-未点赞
 	CreatedAt     int64  `json:"-" db:"create_at"`      // 视频创建时间
 	ModifiedAt    int64  `json:"-" db:"modified_at"`
-	User          User   `json:"author" db:"-"` // 视频作者信息
+	User          User   `json:"author" db:"user"` // 视频作者信息
 }

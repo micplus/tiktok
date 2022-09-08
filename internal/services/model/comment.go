@@ -9,5 +9,5 @@ type Comment struct {
 	VideoID    int64  `json:"-" db:"video_id"`
 	CreatedAt  int64  `json:"-" db:"create_at"`
 	ModifiedAt int64  `json:"-" db:"modified_at"`
-	User       *User  `json:"user" db:"-"` // 评论用户信息
+	User       User   `json:"user" db:"user"` // 评论用户信息
 }
