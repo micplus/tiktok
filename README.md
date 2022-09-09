@@ -5,6 +5,7 @@
 problems when coding:
 
 1. when to init():
+
 在init函数中，os.Getenv("KEY")取不到需要的变量
  
 2. 函数外的变量在包间传递的问题
@@ -38,6 +39,7 @@ func SomeMapper() {
 ```
 
 3. rpc
+
 rpc.Register作用在DefaultServer上，创建新Server则在创建的Server上注册
 
 ```go
