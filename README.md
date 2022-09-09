@@ -49,4 +49,4 @@ srv.Register(new(some.Func))
 
 4. rpc RegisterName
 
-观察函数返回的error信息，可知RegisterName(string, any)接收的服务名称是唯一的
+观察函数返回的error信息，可知RegisterName(string, any)接收的服务名称是唯一的，且string域指定的是前缀名，具体的服务名称取决于传入类型上的方法
