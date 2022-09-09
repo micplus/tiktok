@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"tiktok/internal/config"
 	"tiktok/internal/services/model"
 	"time"
 
@@ -20,11 +21,6 @@ var supportedExts = map[string]struct{}{
 	".mp4":  {},
 	".mpeg": {},
 }
-
-var (
-	videoDir = "/home/abc/workspace/tiktok/public/videos/"
-	coverDir = "/home/abc/workspace/tiktok/public/images/"
-)
 
 const coverExt = ".jpeg"
 
@@ -41,6 +37,10 @@ func Action(args *Request) *Response {
 		reply.StatusMsg = StatusVideoNotSupported.msg()
 		return reply
 	}
+
+	videoDir := config.PublicPath + "/videos/"
+	coverDir := config.PublicPath + "/images/"
+
 	// uuid生成随机文件名，不含扩展名
 	name := uuid.NewString()
 	// 设置文件路径

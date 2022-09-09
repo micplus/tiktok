@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tiktok/api/remote"
 	"tiktok/internal/services/publish/list"
 
 	"github.com/gin-gonic/gin"
@@ -29,10 +30,18 @@ func List(c *gin.Context) {
 		UserID:  userID,
 	}
 
-	reply := list.List(args)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, nil)
-	//	return
-	//}
+	reply := &list.Response{}
+
+	cli := remote.Client
+
+	listCall := cli.Go(remote.Publish+".List", args, reply, nil)
+	replyCall := <-listCall.Done
+	if replyCall.Error != nil {
+		log.Println("publish.List: ", replyCall.Error)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// reply := list.List(args)
+
 	c.JSON(http.StatusOK, reply)
 }

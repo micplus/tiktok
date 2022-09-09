@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tiktok/api/remote"
 	"tiktok/internal/services/comment/action"
 
 	"github.com/gin-gonic/gin"
@@ -46,7 +47,18 @@ func Action(c *gin.Context) {
 		CommentID:   commentID,
 	}
 
-	reply := action.Action(args)
+	reply := &action.Response{}
+
+	cli := remote.Client
+	actionCall := cli.Go(remote.Comment+".Action", args, reply, nil)
+	replyCall := <-actionCall.Done
+
+	if replyCall.Error != nil {
+		log.Println("comment.Action: ", replyCall.Error)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// reply := action.Action(args)
 
 	c.JSON(http.StatusOK, reply)
 }

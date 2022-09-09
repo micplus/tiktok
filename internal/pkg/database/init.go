@@ -10,7 +10,7 @@ import (
 
 var DB *sqlx.DB
 
-func init() {
+func Init() {
 	var err error
 	DB, err = sqlx.Connect("mysql", config.DSN)
 	if err != nil {

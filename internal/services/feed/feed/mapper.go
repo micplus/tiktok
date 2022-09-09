@@ -9,10 +9,9 @@ import (
 
 const limit = 30
 
-var db = database.DB
-
 // 基本功能取给定时间之前的视频
 func videosBeforeTime(now int64) ([]model.Video, error) {
+	db := database.DB
 	videos := []model.Video{}
 	stmt := `SELECT 
 		videos.*, 
@@ -29,6 +28,7 @@ func videosBeforeTime(now int64) ([]model.Video, error) {
 
 // 查询给定IDs点赞数量到id: count
 func favoriteCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
+	db := database.DB
 	count := make(map[int64]int64)
 
 	counts := []favoriteCount{}
@@ -58,6 +58,7 @@ func favoriteCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
 
 // 查询给定IDs评论数到id: count
 func commentCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
+	db := database.DB
 	count := make(map[int64]int64)
 	counts := []commentCount{}
 	stmt := `SELECT video_id, COUNT(*) 'count'
@@ -85,6 +86,7 @@ func commentCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
 }
 
 func favoritesByUserID(id int64) ([]int64, error) {
+	db := database.DB
 	favorites := []int64{}
 	stmt := `SELECT DISTINCT video_id FROM user_favorites WHERE user_id=?`
 	rows, err := db.Queryx(stmt, id)

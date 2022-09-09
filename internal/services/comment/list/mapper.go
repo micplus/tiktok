@@ -5,9 +5,8 @@ import (
 	"tiktok/internal/services/model"
 )
 
-var db = database.DB
-
 func commentsByVideoID(id int64) ([]model.Comment, error) {
+	db := database.DB
 	comments := []model.Comment{}
 	stmt := `SELECT
 		comments.*,

@@ -1,10 +1,12 @@
 package feed
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
-	"tiktok/internal/services/feed"
+	"tiktok/api/remote"
+	"tiktok/internal/services/feed/feed"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,10 +32,18 @@ func Feed(c *gin.Context) {
 	}
 
 	// 调用服务
-	reply := feed.Feed(args)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, nil)
-	//	return
-	//}
+	reply := &feed.Response{}
+
+	cli := remote.Client
+	actionCall := cli.Go(remote.Feed+".Feed", args, reply, nil)
+	replyCall := <-actionCall.Done
+
+	if replyCall.Error != nil {
+		log.Println("feed.Feed: ", replyCall.Error)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// reply := action.Action(args)
+
 	c.JSON(http.StatusOK, reply)
 }

@@ -1,9 +1,11 @@
 package user
 
 import (
+	"log"
 	"net/http"
 	"strconv"
-	"tiktok/internal/services/user"
+	"tiktok/api/remote"
+	"tiktok/internal/services/user/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,10 +29,18 @@ func User(c *gin.Context) {
 		UserID:  userID,
 	}
 
-	reply := user.User(args)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, nil)
-	//	return
-	//}
+	reply := &user.Response{}
+
+	cli := remote.Client
+
+	userCall := cli.Go(remote.User+".User", args, reply, nil)
+	replyCall := <-userCall.Done
+	if replyCall.Error != nil {
+		log.Println("user.User: ", replyCall.Error)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// reply := list.List(args)
+
 	c.JSON(http.StatusOK, reply)
 }

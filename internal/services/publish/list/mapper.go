@@ -7,9 +7,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var db = database.DB
-
 func videosByUserID(id int64) ([]model.Video, error) {
+	db := database.DB
 	videos := []model.Video{}
 	stmt := `SELECT * FROM videos WHERE user_id=? ORDER BY modified_at DESC;`
 	err := db.Select(&videos, stmt, id)
@@ -17,6 +16,7 @@ func videosByUserID(id int64) ([]model.Video, error) {
 }
 
 func userByID(id int64) (*model.User, error) {
+	db := database.DB
 	users := []model.User{}
 	stmt := `SELECT * FROM users WHERE id=?;`
 	err := db.Select(&users, stmt, id)
@@ -31,6 +31,7 @@ func userByID(id int64) (*model.User, error) {
 
 // 查询给定IDs点赞数量到id: count
 func favoriteCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
+	db := database.DB
 	count := make(map[int64]int64)
 	counts := []favoriteCount{}
 	stmt := `SELECT video_id, COUNT(*) 'count' 

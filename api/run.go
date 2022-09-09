@@ -1,13 +1,16 @@
-package main
+package api
 
 import (
-	"tiktok/api"
 	"tiktok/api/config"
+	"tiktok/api/remote"
 	"tiktok/api/router"
 )
 
-func main() {
-	api.Run()
+func Run() {
+	config.Load()
+
+	remote.Init()
+
 	r := router.New()
 	r.Run(config.Address)
 }

@@ -5,6 +5,10 @@ import (
 	"tiktok/internal/services/model"
 )
 
+const ServiceName = "CommentList"
+
+type Reg int
+
 func List(args *Request) *Response {
 	reply := &Response{
 		StatusCode: int32(StatusOK),

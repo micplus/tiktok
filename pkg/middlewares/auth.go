@@ -36,3 +36,28 @@ func Auth() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func AuthNoAbort() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Query("token")
+		if token == "" {
+			token = c.PostForm("token")
+		}
+		if token == "" {
+			c.Next()
+			return
+		}
+		claims, ok := auth.ParseToken(token)
+		if !ok {
+			c.Next()
+			return
+		}
+		if time.Now().Unix() > claims.ExpiresAt {
+			c.Next()
+			return
+		}
+		// 请求中的token有效，使用token携带的用户id
+		c.Set("login_id", claims.UserID)
+		c.Next()
+	}
+}

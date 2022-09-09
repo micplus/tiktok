@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter() *gin.Engine {
+func New() *gin.Engine {
 	r := gin.Default()
 
 	g := r.Group("/douyin")
 	{
-		feeds := g.Group("/feed")
+		feeds := g.Group("/feed").Use(mw.AuthNoAbort())
 		{
 			feeds.GET("/", feed.Feed)
 		}

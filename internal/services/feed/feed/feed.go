@@ -47,7 +47,6 @@ func Feed(args *Request) *Response {
 			videos[i].CommentCount = commentCount[videos[i].ID]
 		}
 	}
-
 	// 更新当前用户看到的点赞信息
 	if args.LoginID != 0 { // 已登录
 		favorites, err := favoritesByUserID(args.LoginID)

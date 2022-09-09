@@ -1,0 +1,14 @@
+[address]
+port=12570
+
+[mysql]
+host="127.0.0.1"
+port=3306
+network="tcp"
+database="tiktok"
+username="root"
+password="1234"
+charset="utf8"
+
+[public]
+path="/public"

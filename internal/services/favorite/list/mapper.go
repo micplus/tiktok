@@ -7,9 +7,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var db = database.DB
-
 func favoriteIDsByUserID(id int64) ([]int64, error) {
+	db := database.DB
 	stmt := `SELECT DISTINCT video_id FROM user_favorites WHERE user_id=?;`
 	rows, err := db.Queryx(stmt, id)
 	if err != nil {
@@ -25,6 +24,7 @@ func favoriteIDsByUserID(id int64) ([]int64, error) {
 }
 
 func videosByIDs(ids []int64) ([]model.Video, error) {
+	db := database.DB
 	videos := []model.Video{}
 	stmt := `SELECT 
 		videos.*, 
@@ -45,6 +45,7 @@ func videosByIDs(ids []int64) ([]model.Video, error) {
 }
 
 func isFavoritesOfUserID(videoIDs []int64, userID int64) (map[int64]struct{}, error) {
+	db := database.DB
 	f := make(map[int64]struct{})
 	stmt := `SELECT video_id FROM user_favorites
 		WHERE user_id=? AND video_id IN (?);`
@@ -70,6 +71,7 @@ func isFavoritesOfUserID(videoIDs []int64, userID int64) (map[int64]struct{}, er
 
 // 查询给定IDs点赞数量到id: count
 func favoriteCountsByVideoIDs(ids []int64) (map[int64]int64, error) {
+	db := database.DB
 	count := make(map[int64]int64)
 
 	counts := []favoriteCount{}

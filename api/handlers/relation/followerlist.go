@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tiktok/api/remote"
 	"tiktok/internal/services/relation/follower/list"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,18 @@ func FollowerList(c *gin.Context) {
 		UserID:  userID,
 	}
 
-	reply := list.List(args)
+	reply := &list.Response{}
+
+	cli := remote.Client
+
+	listCall := cli.Go(remote.Relation+".FollowerList", args, reply, nil)
+	replyCall := <-listCall.Done
+	if replyCall.Error != nil {
+		log.Println("relation.FollowerList: ", replyCall.Error)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	// reply := list.List(args)
 
 	c.JSON(http.StatusOK, reply)
 }

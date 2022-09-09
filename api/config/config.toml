@@ -1,0 +1,6 @@
+[address]
+port=12569
+
+[remote]
+host="127.0.0.1"
+port=12570

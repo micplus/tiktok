@@ -7,9 +7,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var db = database.DB
-
 func followerIDsByUserID(userID int64) ([]int64, error) {
+	db := database.DB
 	ids := []int64{}
 	stmt := `SELECT DISTINCT user_id FROM user_follows WHERE follow_id=?;`
 	rows, err := db.Queryx(stmt, userID)
@@ -25,6 +24,7 @@ func followerIDsByUserID(userID int64) ([]int64, error) {
 }
 
 func usersByIDs(ids []int64) ([]model.User, error) {
+	db := database.DB
 	users := []model.User{}
 	stmt := `SELECT * FROM users WHERE id IN (?);`
 	query, args, err := sqlx.In(stmt, ids)
@@ -36,6 +36,7 @@ func usersByIDs(ids []int64) ([]model.User, error) {
 }
 
 func isFollowersOfUserID(ids []int64, userID int64) (map[int64]struct{}, error) {
+	db := database.DB
 	f := make(map[int64]struct{})
 	followers := []int64{}
 	stmt := `SELECT user_id FROM user_follows 

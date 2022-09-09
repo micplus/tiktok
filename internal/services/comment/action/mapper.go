@@ -5,9 +5,8 @@ import (
 	"tiktok/internal/services/model"
 )
 
-var db = database.DB
-
 func createComment(c *model.Comment) error {
+	db := database.DB
 	stmt := `INSERT INTO comments(
 		content, create_date, created_at, modified_at, video_id, user_id
 	) VALUES(?, ?, ?, ?, ?, ?);`
@@ -17,6 +16,7 @@ func createComment(c *model.Comment) error {
 }
 
 func userByID(id int64) (*model.User, error) {
+	db := database.DB
 	users := []model.User{}
 	stmt := `SELECT * FROM users WHERE id=?;`
 	err := db.Select(&users, stmt, id)
@@ -30,6 +30,7 @@ func userByID(id int64) (*model.User, error) {
 }
 
 func deleteCommentByID(id int64) error {
+	db := database.DB
 	stmt := `DELETE FROM comments WHERE id=?;`
 	_, err := db.Exec(stmt, id)
 	return err
