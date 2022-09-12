@@ -18,7 +18,7 @@
 
 后端服务器内部按照Controllers/Services的形式组织
 
-TODO：让Service单独运行，Controller转化为API网关，实现微服务架构
+TODO：让Service单独运行，Controller转化为API网关，增加服务注册/发现的守护进程，实现微服务架构
 
 ## Problems
 
