@@ -1,10 +1,10 @@
 package main
 
 import (
-	"tiktok/internal/services"
+	"tiktok/internal"
 )
 
 func main() {
-	services.Run()
+	internal.Run()
 	select {}
 }

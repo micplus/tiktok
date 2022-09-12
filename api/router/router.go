@@ -45,8 +45,8 @@ func New() *gin.Engine {
 		relations := g.Group("/relation").Use(mw.Auth())
 		{
 			relations.POST("/action", relation.Action)
-			relations.GET("/follow/list", relation.FollowList)
-			relations.GET("/follower/list", relation.FollowerList)
+			relations.GET("/follow/list", relation.Follows)
+			relations.GET("/follower/list", relation.Followers)
 		}
 	}
 	return r

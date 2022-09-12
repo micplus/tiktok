@@ -11,6 +11,7 @@ import (
 
 var (
 	DSN        string
+	RedisPort  string
 	PublicPath string
 	Address    string
 )
@@ -23,6 +24,10 @@ type mysql struct {
 	Username string
 	Password string
 	Charset  string
+}
+
+type redis struct {
+	Port int64
 }
 
 func (m *mysql) dsn() string {
@@ -41,6 +46,7 @@ type server struct {
 
 type config struct {
 	Mysql  mysql  `toml:"mysql"`
+	Redis  redis  `toml:"redis"`
 	Public public `toml:"public"`
 	Server server `toml:"address"`
 }
@@ -56,4 +62,6 @@ func Load() {
 
 	port := strconv.FormatInt(detail.Server.Port, 10)
 	Address = ":" + port
+
+	RedisPort = ":" + strconv.FormatInt(detail.Redis.Port, 10)
 }
