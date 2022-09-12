@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"tiktok/api/remote"
-	"tiktok/internal/services/feed/feed"
+	"tiktok/internal/controllers/feed"
 
 	"github.com/gin-gonic/gin"
 )

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"tiktok/api/remote"
-	"tiktok/internal/services/user/user"
+	"tiktok/internal/controllers/user/user"
 
 	"github.com/gin-gonic/gin"
 )
