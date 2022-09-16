@@ -28,7 +28,9 @@ problems when coding:
 
 在init函数中，os.Getenv("KEY")取不到需要的变量
  
-2. 函数外的变量在包间传递的问题
+2. 函数外的变量初始化时机的问题
+
+见gopl 2.3变量一节：包级变量在main函数入口前完成初始化；局部变量在实际执行到的位置初始化。
 
 ```go
 package database
