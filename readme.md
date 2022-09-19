@@ -28,7 +28,9 @@ problems when coding:
 
 在init函数中，os.Getenv("KEY")取不到需要的变量
  
-2. 函数外的变量在包间传递的问题
+2. 函数外的变量初始化时机的问题
+
+见gopl 2.3变量一节：包级变量在main函数入口前完成初始化；局部变量在实际执行到的位置初始化。
 
 ```go
 package database
@@ -70,3 +72,7 @@ srv.Register(new(some.Func))
 4. rpc RegisterName
 
 观察函数返回的error信息，可知RegisterName(string, any)接收的服务名称是唯一的，且string域指定的是前缀名，具体的服务名称取决于传入类型上的方法
+
+5. 路由坑
+
+postman对/feed和/feed/发请求效果是一样的，但路由设为"/feed",在浏览器、客户端中发/feed/请求就会307
