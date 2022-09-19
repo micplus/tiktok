@@ -6,7 +6,6 @@ import (
 	"sync"
 	"tiktok/internal/model"
 	"tiktok/internal/services/comment"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/user"
 	"time"
 )
@@ -17,13 +16,13 @@ func Action(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Comment.Action: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Comment.Action: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	if args.Type == OpComment && len(args.CommentText) == 0 {
 		reply.StatusCode = int32(StatusNoText)

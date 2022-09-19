@@ -6,7 +6,6 @@ import (
 	"sync"
 	"tiktok/internal/model"
 
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/relation"
 	"tiktok/internal/services/user"
 )
@@ -17,14 +16,14 @@ func User(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	// 检查登陆状态
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("User.User: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// // 检查登陆状态
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("User.User: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	// 获取用户信息
 	u, err := user.ByID(args.UserID)

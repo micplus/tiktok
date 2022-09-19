@@ -4,7 +4,6 @@ import (
 	"log"
 	"tiktok/internal/model"
 	"tiktok/internal/services/favorite"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/user"
 	"tiktok/internal/services/video"
 )
@@ -15,13 +14,13 @@ func List(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Publish.List: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Publish.List: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	u, err := user.ByID(args.UserID)
 	if err != nil {

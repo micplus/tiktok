@@ -1,20 +1,10 @@
 package action
 
 import (
-	"bytes"
-	"fmt"
 	"log"
-	"os"
-	"path/filepath"
-	"tiktok/internal/config"
 	"tiktok/internal/model"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/video"
 	"time"
-
-	"github.com/disintegration/imaging"
-	"github.com/google/uuid"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 var supportedExts = map[string]struct{}{
@@ -24,7 +14,12 @@ var supportedExts = map[string]struct{}{
 	".mpeg": {},
 }
 
-const coverExt = ".jpeg"
+const (
+	coverExt = ".jpeg"
+
+	videoDir = "/videos/"
+	coverDir = "/covers/"
+)
 
 func Action(args *Request) *Response {
 	reply := &Response{
@@ -32,68 +27,27 @@ func Action(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	// 检查登陆状态
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Publish.Action: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
-
-	// 检查扩展名
-	ext := filepath.Ext(args.Filename)
-	if _, ok := supportedExts[ext]; !ok {
-		reply.StatusCode = int32(StatusVideoNotSupported)
-		reply.StatusMsg = StatusVideoNotSupported.msg()
-		return reply
-	}
-
-	videoDir := config.PublicPath + "/videos/"
-	coverDir := config.PublicPath + "/images/"
-
-	// uuid生成随机文件名，不含扩展名
-	name := uuid.NewString()
-	// 设置文件路径
-	playURL := videoDir + name + ext
-	// 保存文件
-	f, err := os.Create(playURL)
-	if err != nil {
-		log.Println("Publish.Action: ", err)
-		reply.StatusCode = int32(StatusUploadFailed)
-		reply.StatusMsg = StatusUploadFailed.msg()
-		return reply
-	}
-
-	if _, err = f.Write(args.Data); err != nil {
-		log.Println("Publish.Action: ", err)
-		reply.StatusCode = int32(StatusUploadFailed)
-		reply.StatusMsg = StatusUploadFailed.msg()
-		f.Close()
-		return reply
-	}
-	f.Close()
-
-	coverURL := coverDir + name + coverExt
-	// 取1帧作封面，保存
-	if err = generateCover(coverURL, playURL, 1); err != nil {
-		log.Println("Publish.Action: ", err)
-		reply.StatusCode = int32(StatusUploadFailed)
-		reply.StatusMsg = StatusUploadFailed.msg()
-		return reply
-	}
+	// // 检查登陆状态
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Publish.Action: ", err)
+	// 	log.Println(ok)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	now := time.Now().UnixMilli()
 	v := &model.Video{
 		UserID:     args.LoginID,
 		Title:      args.Title,
-		PlayURL:    playURL,
-		CoverURL:   coverURL,
+		PlayURL:    args.PlayURL,
+		CoverURL:   args.CoverURL,
 		CreatedAt:  now,
 		ModifiedAt: now,
 	}
 
-	_, err = video.Insert(v)
+	_, err := video.Insert(v)
 	if err != nil {
 		log.Println("Publish.Action: ", err)
 		reply.StatusCode = int32(StatusUploadFailed)
@@ -104,32 +58,11 @@ func Action(args *Request) *Response {
 	return reply
 }
 
-func generateCover(coverName, videoName string, frameNum int) error {
-	buf := bytes.NewBuffer(nil)
-	err := ffmpeg.Input(videoName).
-		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", frameNum)}).
-		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "mjpeg"}).
-		WithOutput(buf, os.Stdout).
-		Run()
-	if err != nil {
-		return err
-	}
-	img, err := imaging.Decode(buf)
-	if err != nil {
-		return err
-	}
-
-	if err = imaging.Save(img, coverName); err != nil {
-		return err
-	}
-	return nil
-}
-
 type Request struct {
 	LoginID  int64
 	Title    string
-	Filename string
-	Data     []byte
+	PlayURL  string
+	CoverURL string
 }
 
 type Response struct {

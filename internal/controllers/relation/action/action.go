@@ -2,7 +2,6 @@ package action
 
 import (
 	"log"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/relation"
 )
 
@@ -12,13 +11,13 @@ func Action(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Relation.Action: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Relation.Action: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	if args.LoginID == args.UserID {
 		reply.StatusCode = int32(StatusIllegalOperation)

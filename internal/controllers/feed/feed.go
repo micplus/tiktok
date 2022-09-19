@@ -7,7 +7,6 @@ import (
 	"tiktok/internal/model"
 	"tiktok/internal/services/comment"
 	"tiktok/internal/services/favorite"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/user"
 	"tiktok/internal/services/video"
 	"time"
@@ -55,14 +54,13 @@ func feed(args *Request) *Response {
 	go setFavoriteCounts(&videos, &wg)
 	go setCommentCounts(&videos, &wg)
 	if args.LoginID > 0 {
-		ok, err := login.CheckCache(args.LoginID)
-		if err != nil || !ok {
-			log.Println("Feed.Feed: ", err)
-		}
-		if err == nil && ok {
-			wg.Add(1)
-			go setIsFavorites(args.LoginID, &videos, &wg)
-		}
+		// ok, err := login.CheckCache(args.LoginID)
+		// if err != nil || !ok {
+		// 	log.Println("Feed.Feed: ", err)
+		// }
+		// if err == nil {
+		wg.Add(1)
+		go setIsFavorites(args.LoginID, &videos, &wg)
 	}
 	wg.Wait()
 

@@ -1,19 +1,22 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/BurntSushi/toml"
 )
 
 var (
-	Address string
-	Remote  string
+	Address    string
+	Remote     string
+	StaticAddr string
+	StaticDir  string
 )
 
 type server struct {
+	Host string
 	Port int64
 }
 
@@ -22,9 +25,17 @@ type remote struct {
 	Port int64
 }
 
+type static struct {
+	Network string
+	Host    string
+	Port    int64
+	Dir     string
+}
+
 type config struct {
 	Server server `toml:"address"`
 	Remote remote `toml:"remote"`
+	Static static `toml:"static"`
 }
 
 func Load() {
@@ -33,10 +44,16 @@ func Load() {
 	if _, err := toml.DecodeFile(base+"/api/config/config.toml", detail); err != nil {
 		log.Panic(err)
 	}
-	port := strconv.FormatInt(detail.Server.Port, 10)
-	Address = ":" + port
+	port := detail.Server.Port
+	Address = fmt.Sprintf(":%d", port)
 
 	host := detail.Remote.Host
-	port = strconv.FormatInt(detail.Remote.Port, 10)
-	Remote = host + ":" + port
+	port = detail.Remote.Port
+	Remote = fmt.Sprintf("%s:%d", host, port)
+
+	network := detail.Static.Network
+	host = detail.Static.Host
+	port = detail.Static.Port
+	StaticAddr = fmt.Sprintf("%s://%s:%d", network, host, port)
+	StaticDir = detail.Static.Dir
 }

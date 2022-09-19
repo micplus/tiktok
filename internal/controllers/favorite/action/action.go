@@ -3,7 +3,6 @@ package action
 import (
 	"log"
 	"tiktok/internal/services/favorite"
-	"tiktok/internal/services/login"
 )
 
 func Action(args *Request) *Response {
@@ -12,13 +11,13 @@ func Action(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Favorite.Action: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Favorite.Action: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	switch args.Type {
 	case OpFavorite:

@@ -4,7 +4,6 @@ import (
 	"log"
 	"tiktok/internal/model"
 	"tiktok/internal/services/comment"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/user"
 )
 
@@ -14,19 +13,22 @@ func List(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Comment.List: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Comment.List: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	comments, err := comment.ByVideoID(args.VideoID)
 	if err != nil {
 		log.Println("Comment.List: ", err)
 		reply.StatusCode = int32(StatusListFailed)
 		reply.StatusMsg = StatusListFailed.msg()
+		return reply
+	}
+	if len(comments) == 0 {
 		return reply
 	}
 

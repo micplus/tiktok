@@ -60,16 +60,16 @@ func Login(args *Request) *Response {
 	// if err := login.SetCache(reply.UserID); err != nil {
 	// 	log.Println("User.Register: ", err)
 	// }
-	go setCache(reply.UserID)
+	//go setCache(reply.UserID)
 
 	return reply
 }
 
-func setCache(id int64) {
-	if err := login.SetCache(id); err != nil {
-		log.Println("User.Register: ", err)
-	}
-}
+// func setCache(id int64) {
+// 	if err := login.RefreshCache(id); err != nil {
+// 		log.Println("User.Register: ", err)
+// 	}
+// }
 
 type Request struct {
 	Username string

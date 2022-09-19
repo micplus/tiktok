@@ -88,16 +88,16 @@ func Register(args *Request) *Response {
 	reply.Token = token
 
 	// 缓存登录状态，流程外
-	go setCache(reply.UserID)
+	// go setCache(reply.UserID)
 
 	return reply
 }
 
-func setCache(id int64) {
-	if err := login.SetCache(id); err != nil {
-		log.Println("User.Register: ", err)
-	}
-}
+// func setCache(id int64) {
+// 	if err := login.SetCache(id); err != nil {
+// 		log.Println("User.Register: ", err)
+// 	}
+// }
 
 type Request struct {
 	Username string

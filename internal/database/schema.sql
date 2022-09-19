@@ -34,25 +34,6 @@ CREATE TABLE user_logins (
 
 CREATE UNIQUE INDEX userloginsusername ON user_logins(`username`);
 
-CREATE TABLE user_favorites (
-    id bigint AUTO_INCREMENT NOT NULL,
-    user_id bigint NOT NULL,
-    video_id bigint NOT NULL,
-    PRIMARY KEY(`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE INDEX userfavoritesuserid ON user_favorites(`user_id`);
-
-CREATE TABLE user_follows (
-    id bigint NOT NULL AUTO_INCREMENT,
-    user_id bigint NOT NULL,
-    follow_id bigint NOT NULL,
-    PRIMARY KEY(`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE INDEX userfollowsuserid ON user_follows(`user_id`);
-CREATE INDEX userfollowsfollowid ON user_follows(`follow_id`);
-
 CREATE TABLE comments (
     id bigint NOT NULL AUTO_INCREMENT,
     content text NOT NULL,

@@ -4,7 +4,6 @@ import (
 	"log"
 	"sort"
 	"tiktok/internal/model"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/relation"
 	"tiktok/internal/services/user"
 )
@@ -15,13 +14,13 @@ func Followers(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Relation.Followers: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Relation.Followers: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	ids, err := relation.FollowersByID(args.UserID)
 	if err != nil {

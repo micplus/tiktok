@@ -1,6 +1,13 @@
 [address]
+host="43.143.54.177"
 port=12569
 
 [remote]
 host="127.0.0.1"
-port=12570
+port=21624
+
+[static]
+network="http"
+host="43.143.54.177"
+port=12569
+dir="/var/www"

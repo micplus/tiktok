@@ -13,6 +13,7 @@ var (
 	DSN        string
 	RedisPort  string
 	PublicPath string
+	StaticPath string
 	Address    string
 )
 
@@ -36,10 +37,6 @@ func (m *mysql) dsn() string {
 		m.Database, m.Charset)
 }
 
-type public struct {
-	Path string
-}
-
 type server struct {
 	Port int64
 }
@@ -47,7 +44,6 @@ type server struct {
 type config struct {
 	Mysql  mysql  `toml:"mysql"`
 	Redis  redis  `toml:"redis"`
-	Public public `toml:"public"`
 	Server server `toml:"address"`
 }
 
@@ -58,7 +54,6 @@ func Load() {
 		log.Panic(err)
 	}
 	DSN = detail.Mysql.dsn()
-	PublicPath = string(base) + detail.Public.Path
 
 	port := strconv.FormatInt(detail.Server.Port, 10)
 	Address = ":" + port

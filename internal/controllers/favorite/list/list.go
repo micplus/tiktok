@@ -6,7 +6,6 @@ import (
 	"sync"
 	"tiktok/internal/model"
 	"tiktok/internal/services/favorite"
-	"tiktok/internal/services/login"
 	"tiktok/internal/services/video"
 )
 
@@ -16,13 +15,13 @@ func List(args *Request) *Response {
 		StatusMsg:  StatusOK.msg(),
 	}
 
-	ok, err := login.CheckCache(args.LoginID)
-	if err != nil || !ok {
-		log.Println("Favorite.List: ", err)
-		reply.StatusCode = int32(StatusTokenExpired)
-		reply.StatusMsg = StatusTokenExpired.msg()
-		return reply
-	}
+	// ok, err := login.CheckCache(args.LoginID)
+	// if err != nil || !ok {
+	// 	log.Println("Favorite.List: ", err)
+	// 	reply.StatusCode = int32(StatusTokenExpired)
+	// 	reply.StatusMsg = StatusTokenExpired.msg()
+	// 	return reply
+	// }
 
 	// 查目标用户点赞列表
 	ids, err := favorite.FavoritesByUserID(args.UserID)
